@@ -76,6 +76,10 @@ SPLUNK_PLUGIN_CONFIG="./plugins/notifications/splunk/splunk.yaml"
 BACKUP_DIR=$(mktemp -d)
 rm -rf $BACKUP_DIR
 
+command_exists() {
+    command -v "$1" >/dev/null 2>&1 ;
+}
+
 log_info() {
     msg=$1
     date=$(date +%x:%X)
@@ -460,7 +464,7 @@ install_bins() {
     log_dbg "Installing crowdsec binaries"
     install -v -m 755 -D "${CROWDSEC_BIN}" "${CROWDSEC_BIN_INSTALLED}" 1> /dev/null || exit
     install -v -m 755 -D "${CSCLI_BIN}" "${CSCLI_BIN_INSTALLED}" 1> /dev/null || exit
-    which systemctl && systemctl is-active --quiet crowdsec
+    command_exists systemctl && systemctl is-active --quiet crowdsec
     if [ $? -eq 0 ]; then
         systemctl stop crowdsec 
     fi
@@ -559,14 +563,8 @@ main() {
 
     if [ "$1" == "install" ] || [ "$1" == "configure" ] || [ "$1" == "detect" ]; then
         if [ "${SILENT}" == "false" ]; then
-            which whiptail > /dev/null
-            if [ $? -ne 0 ]; then
-                log_fatal "whiptail binary is needed to use the wizard in interactive mode, exiting ..."
-            fi
-        fi
-        which envsubst > /dev/null
-        if [ $? -ne 0 ]; then
-            log_fatal "envsubst binary is needed to use do a full install with the wizard, exiting ..."
+            command_exists whiptail || log_fatal "whiptail binary is needed to use the wizard in interactive mode, exiting ..."
+            command_exists envsubst || log_fatal "envsubst binary is needed to use do a full install with the wizard, exiting ..."
         fi
     fi
 

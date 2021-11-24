@@ -23,7 +23,7 @@ do
 	esac
 done
 
-BASE=$(realpath $BASE)
+BASE=$(realpath "$BASE")
 
 DATA_DIR="$BASE/data"
 
@@ -62,8 +62,8 @@ create_arbo() {
 	mkdir -p "$POSTOVERFLOWS_DIR"
 	mkdir -p "$CSCLI_DIR"
 	mkdir -p "$HUB_DIR"
-	mkdir -p $CONFIG_DIR/$NOTIF_DIR/$plugin
-	mkdir -p $BASE/$PLUGINS_DIR
+	mkdir -p "$CONFIG_DIR/$NOTIF_DIR/$plugin"
+	mkdir -p "$BASE/$PLUGINS_DIR"
 }
 
 copy_files() {
@@ -75,22 +75,22 @@ copy_files() {
 	cp "./config/acquis.yaml" "$CONFIG_DIR"
 	touch "$CONFIG_DIR"/local_api_credentials.yaml
 	touch "$CONFIG_DIR"/online_api_credentials.yaml
-	envsubst < "./config/dev.yaml" > $BASE/dev.yaml
+	envsubst < "./config/dev.yaml" > "$BASE/dev.yaml"
 	for plugin in $PLUGINS
 	do
-		cp $PLUGINS_DIR/$NOTIF_DIR/$plugin/notification-$plugin $BASE/$PLUGINS_DIR/notification-$plugin
-		cp $PLUGINS_DIR/$NOTIF_DIR/$plugin/$plugin.yaml $CONFIG_DIR/$NOTIF_DIR/$plugin.yaml
+		cp "$PLUGINS_DIR/$NOTIF_DIR/$plugin/notification-$plugin" "$BASE/$PLUGINS_DIR/notification-$plugin"
+		cp "$PLUGINS_DIR/$NOTIF_DIR/$plugin/$plugin.yaml" "$CONFIG_DIR/$NOTIF_DIR/$plugin.yaml"
 	done
 }
 
 
 setup() {
-	$BASE/cscli -c "$CONFIG_FILE" hub update
-	$BASE/cscli -c "$CONFIG_FILE" collections install crowdsecurity/linux
+	"$BASE/cscli" -c "$CONFIG_FILE" hub update
+	"$BASE/cscli" -c "$CONFIG_FILE" collections install crowdsecurity/linux
 }
 
 setup_api() {
-	$BASE/cscli -c "$CONFIG_FILE" machines add test -p testpassword -f $CONFIG_DIR/local_api_credentials.yaml --force
+	"$BASE/cscli" -c "$CONFIG_FILE" machines add test -p testpassword -f "$CONFIG_DIR/local_api_credentials.yaml" --force
 }
 
 
@@ -103,10 +103,10 @@ main() {
 	log_info "Files copied"
 	log_info "Setting up configurations"
 	CURRENT_PWD=$(pwd)
-	cd $BASE
+	cd "$BASE"
 	setup_api
 	setup
-	cd $CURRENT_PWD
+	cd "$CURRENT_PWD"
 	log_info "Environment is ready in $BASE"
 }
 

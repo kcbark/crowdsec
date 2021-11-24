@@ -53,14 +53,14 @@ function init
       fi
       RELEASE_FOLDER="crowdsec-${CROWDSEC_VERSION}"
     fi
-    cp -r ${RELEASE_FOLDER} ${CURRENT_FOLDER}
-    cd ${CURRENT_FOLDER}
+    cp -r "${RELEASE_FOLDER}" "${CURRENT_FOLDER}"
+    cd "${CURRENT_FOLDER}"
 
 
     echo "[*] Installing crowdsec (bininstall)"
-    cd ${RELEASE_FOLDER}/
+    cd "${RELEASE_FOLDER}/"
     ./wizard.sh --bininstall
-    cd ${CURRENT_FOLDER}
+    cd "${CURRENT_FOLDER}"
     cscli hub update
     cscli collections install crowdsecurity/sshd
     cscli postoverflows install crowdsecurity/cdn-whitelist
@@ -71,9 +71,9 @@ function init
     echo "[*] Install firewall bouncer"
     wget https://github.com/crowdsecurity/cs-firewall-bouncer/releases/download/${BOUNCER_VERSION}/cs-firewall-bouncer.tgz
     tar xzvf cs-firewall-bouncer.tgz
-    cd cs-firewall-bouncer-${BOUNCER_VERSION}/
+    cd "cs-firewall-bouncer-${BOUNCER_VERSION}/"
     (echo "iptables" | sudo ./install.sh) || (echo "Unable to install cs-firewall-bouncer" && exit 1)
-    cd ${CURRENT_FOLDER}
+    cd "${CURRENT_FOLDER}"
 
     echo "[*] Tainting parser /etc/crowdsec/parsers/s01-parse/sshd-logs.yaml"
     echo "  # test taint parser" >> /etc/crowdsec/parsers/s01-parse/sshd-logs.yaml
@@ -85,7 +85,7 @@ function init
     echo "  # test taint postoverflow" >> /etc/crowdsec/postoverflows/s01-whitelist/cdn-whitelist.yaml
 
     echo "[*] Tainting new systemd configuration file"
-    echo "  # test taint systemd file" >> ${RELEASE_FOLDER}/config/crowdsec.service
+    echo "  # test taint systemd file" >> "${RELEASE_FOLDER}/config/crowdsec.service"
 
     echo "[*] Tainting profile file"
     echo "  # test taint profile file" >> ${PROFILE_FILE}
@@ -125,17 +125,17 @@ function init
 
     echo "[*] Setup done"
     echo "[*] Lauching the upgrade"
-    cd ${RELEASE_FOLDER}/
+    cd "${RELEASE_FOLDER}/"
     ./wizard.sh --upgrade --force
-    cd ${CURRENT_FOLDER}
+    cd "${CURRENT_FOLDER}"
     echo "[*] Upgrade done, checking results"
 }
 
 function down
 {
-  cd ${RELEASE_FOLDER}/
+  cd "${RELEASE_FOLDER}/"
   ./wizard.sh --uninstall
-  cd ${CURRENT_FOLDER}
+  cd "${CURRENT_FOLDER}"
   rm -rf crowdsec-v*
   rm -rf cs-firewall-bouncer-*
   rm -f crowdsec-release.tgz
@@ -189,7 +189,7 @@ function assert_folder_exists
 
 function test_enabled_parsers
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${HUB_ENABLED_PARSERS} -type f -exec md5sum "{}" +)
   old=$(cat parsers_enabled.md5)
   assert_equal "$new" "$old"
@@ -198,7 +198,7 @@ function test_enabled_parsers
 
 function test_enabled_scenarios
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${HUB_ENABLED_SCENARIOS} -type f -exec md5sum "{}" +)
   old=$(cat scenarios_enabled.md5)
   assert_equal "$new" "$old"
@@ -207,7 +207,7 @@ function test_enabled_scenarios
 
 function test_enabled_collections
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${HUB_ENABLED_COLLECTIONS} -type f -exec md5sum "{}" +)
   old=$(cat collections_enabled.md5)
   assert_equal "$new" "$old"
@@ -216,7 +216,7 @@ function test_enabled_collections
 
 function test_enabled_po
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${HUB_ENABLED_PO} -type f -exec md5sum "{}" +)
   old=$(cat po_enabled.md5)
   assert_equal "$new" "$old"
@@ -224,7 +224,7 @@ function test_enabled_po
 
 function test_config_file
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${CONFIG_FILE} -type f -exec md5sum "{}" +)
   old=$(cat config.md5)
   assert_equal "$new" "$old"
@@ -232,7 +232,7 @@ function test_config_file
 
 function test_acquis_file
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${ACQUIS_FILE} -type f -exec md5sum "{}" +)
   old=$(cat acquis.md5)
   assert_equal "$new" "$old"
@@ -240,7 +240,7 @@ function test_acquis_file
 
 function test_local_api_creds_file
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${LOCAL_API_FILE} -type f -exec md5sum "{}" +)
   old=$(cat local_api_creds.md5)
   assert_equal "$new" "$old"
@@ -249,7 +249,7 @@ function test_local_api_creds_file
 
 function test_online_api_creds_file
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${ONLINE_API_FILE} -type f -exec md5sum "{}" +)
   old=$(cat online_api_creds.md5)
   assert_equal "$new" "$old"
@@ -257,7 +257,7 @@ function test_online_api_creds_file
 
 function test_profile_file
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${PROFILE_FILE} -type f -exec md5sum "{}" +)
   old=$(cat profile.md5)
   assert_equal "$new" "$old"
@@ -265,7 +265,7 @@ function test_profile_file
 
 function test_db_file
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${DB_FILE} -type f -exec md5sum "{}" +)
   old=$(cat db.md5)
   assert_equal "$new" "$old"
@@ -273,7 +273,7 @@ function test_db_file
 
 function test_simulation_file
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${SIMULATION_FILE} -type f -exec md5sum "{}" +)
   old=$(cat simulation.md5)
   assert_equal "$new" "$old"
@@ -281,7 +281,7 @@ function test_simulation_file
 
 function test_systemd_file
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   new=$(find ${SYSTEMD_FILE} -type f -exec md5sum "{}" +)
   old=$(cat systemd.md5)
   assert_not_equal "$new" "$old"
@@ -289,7 +289,7 @@ function test_systemd_file
 
 function test_bouncer_dir
 {
-  echo $FUNCNAME
+  echo "$FUNCNAME"
   assert_folder_exists ${BOUNCER_FOLDER}
 }
 

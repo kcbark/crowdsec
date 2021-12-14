@@ -22,6 +22,7 @@ import (
 	"github.com/crowdsecurity/crowdsec/pkg/models"
 	"github.com/crowdsecurity/crowdsec/pkg/protobufs"
 	"github.com/crowdsecurity/crowdsec/pkg/types"
+	"github.com/google/uuid"
 	plugin "github.com/hashicorp/go-plugin"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
@@ -29,8 +30,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var testMode bool = false
-var pluginMutex sync.Mutex
+var (
+	testMode    bool = false
+	pluginMutex sync.Mutex
+)
 
 const (
 	PluginProtocolVersion uint   = 1
@@ -62,7 +65,7 @@ type PluginConfig struct {
 
 	Format string `yaml:"format"` // specific to notification plugins
 
-	Config map[string]interface{} `yaml:",inline"` //to keep the plugin-specific config
+	Config map[string]interface{} `yaml:",inline"` // to keep the plugin-specific config
 
 }
 
@@ -90,7 +93,6 @@ func (pb *PluginBroker) Init(pluginCfg *csconfig.PluginCfg, profileConfigs []*cs
 	pb.watcher = PluginWatcher{}
 	pb.watcher.Init(pb.pluginConfigByName, pb.alertsByPluginName)
 	return nil
-
 }
 
 func (pb *PluginBroker) Kill() {
@@ -125,6 +127,7 @@ func (pb *PluginBroker) Run(tomb *tomb.Tomb) {
 		}
 	}
 }
+
 func (pb *PluginBroker) addProfileAlert(profileAlert ProfileAlert) {
 	for _, pluginName := range pb.profileConfigs[profileAlert.ProfileID].Notifications {
 		if _, ok := pb.pluginConfigByName[pluginName]; !ok {
@@ -137,6 +140,7 @@ func (pb *PluginBroker) addProfileAlert(profileAlert ProfileAlert) {
 		pb.watcher.Inserts <- pluginName
 	}
 }
+
 func (pb *PluginBroker) profilesContainPlugin(pluginName string) bool {
 	for _, profileCfg := range pb.profileConfigs {
 		for _, name := range profileCfg.Notifications {
@@ -147,6 +151,7 @@ func (pb *PluginBroker) profilesContainPlugin(pluginName string) bool {
 	}
 	return false
 }
+
 func (pb *PluginBroker) loadConfig(path string) error {
 	files, err := listFilesAtPath(path)
 	if err != nil {
@@ -359,7 +364,11 @@ func pluginIsValid(path string) error {
 	if err != nil {
 		return errors.Wrap(err, "while getting current user")
 	}
-	procAttr, err := getProcessAtr(currentUser.Username, currentUser.Username)
+	currentGroup, err := user.LookupGroupId(currentUser.Gid)
+	if err != nil {
+		return errors.Wrap(err, "while getting current group")
+	}
+	procAttr, err := getProcessAtr(currentUser.Username, currentGroup.Name)
 	if err != nil {
 		return errors.Wrap(err, "while getting process attributes")
 	}
@@ -430,19 +439,12 @@ func getProcessAtr(username string, groupname string) (*syscall.SysProcAttr, err
 	}, nil
 }
 
-func getUUID() (string, error) {
-	if d, err := os.ReadFile("/proc/sys/kernel/random/uuid"); err != nil {
-		return "", err
-	} else {
-		return string(d), nil
-	}
+func getUUID() string {
+	return uuid.New().String()
 }
 
 func getHandshake() (plugin.HandshakeConfig, error) {
-	uuid, err := getUUID()
-	if err != nil {
-		return plugin.HandshakeConfig{}, err
-	}
+	uuid := getUUID()
 	handshake := plugin.HandshakeConfig{
 		ProtocolVersion:  PluginProtocolVersion,
 		MagicCookieKey:   CrowdsecPluginKey,

@@ -71,14 +71,14 @@ func NewDefaultConfig() *Config {
 		Level:   "full",
 	}
 	configPaths := ConfigurationPaths{
-		ConfigDir:          "/etc/crowdsec/",
-		DataDir:            "/var/lib/crowdsec/data/",
-		SimulationFilePath: "/etc/crowdsec/config/simulation.yaml",
-		HubDir:             "/etc/crowdsec/hub",
-		HubIndexFile:       "/etc/crowdsec/hub/.index.json",
+		ConfigDir:          "/usr/local/etc/crowdsec/",
+		DataDir:            "/var/db/crowdsec/data/",
+		SimulationFilePath: "/usr/local/etc/crowdsec/config/simulation.yaml",
+		HubDir:             "/usr/local/etc/crowdsec/hub",
+		HubIndexFile:       "/usr/local/etc/crowdsec/hub/.index.json",
 	}
 	crowdsecCfg := CrowdsecServiceCfg{
-		AcquisitionFilePath: "/etc/crowdsec/config/acquis.yaml",
+		AcquisitionFilePath: "/usr/local/etc/crowdsec/config/acquis.yaml",
 		ParserRoutinesCount: 1,
 	}
 
@@ -88,20 +88,20 @@ func NewDefaultConfig() *Config {
 
 	apiCfg := APICfg{
 		Client: &LocalApiClientCfg{
-			CredentialsFilePath: "/etc/crowdsec/config/lapi-secrets.yaml",
+			CredentialsFilePath: "/usr/local/etc/crowdsec/config/lapi-secrets.yaml",
 		},
 		Server: &LocalApiServerCfg{
 			ListenURI:              "127.0.0.1:8080",
 			UseForwardedForHeaders: false,
 			OnlineClient: &OnlineApiClientCfg{
-				CredentialsFilePath: "/etc/crowdsec/config/online-api-secrets.yaml",
+				CredentialsFilePath: "/usr/local/etc/crowdsec/config/online-api-secrets.yaml",
 			},
 		},
 	}
 
 	dbConfig := DatabaseCfg{
 		Type:   "sqlite",
-		DbPath: "/var/lib/crowdsec/data/crowdsec.db",
+		DbPath: "/var/db/crowdsec/data/crowdsec.db",
 	}
 
 	globalCfg := Config{

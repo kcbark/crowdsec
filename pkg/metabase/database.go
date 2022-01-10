@@ -52,7 +52,7 @@ func NewDatabase(config *csconfig.DatabaseCfg, client *APIClient, remoteDBAddr s
 	case "sqlite":
 		database.DBUrl = metabaseSQLiteDBURL
 		localFolder := filepath.Dir(config.DbPath)
-		// replace /var/lib/crowdsec/data/ with /metabase-data/
+		// replace /var/db/crowdsec/data/ with /metabase-data/
 		dbPath := strings.Replace(config.DbPath, localFolder, containerSharedFolder, 1)
 		details = &Details{
 			Db: dbPath,

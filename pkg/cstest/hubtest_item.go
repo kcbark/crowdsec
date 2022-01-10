@@ -78,7 +78,7 @@ const (
 
 	BucketPourResultFileName = "bucketpour-dump.yaml"
 
-	crowdsecPatternsFolder = "/etc/crowdsec/patterns/"
+	crowdsecPatternsFolder = "/usr/local/etc/crowdsec/patterns/"
 )
 
 func NewTest(name string, hubTest *HubTest) (*HubTestItem, error) {

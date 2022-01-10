@@ -6,22 +6,22 @@ common:
   log_dir: /var/log/
   working_dir: .
 config_paths:
-  config_dir: /etc/crowdsec/
-  data_dir: /var/lib/crowdsec/data/
-  simulation_path: /etc/crowdsec/simulation.yaml
-  hub_dir: /etc/crowdsec/hub/
-  index_path: /etc/crowdsec/hub/.index.json
-  notification_dir: /etc/crowdsec/notifications/
+  config_dir: /usr/local/etc/crowdsec/
+  data_dir: /var/db/crowdsec/data/
+  simulation_path: /usr/local/etc/crowdsec/simulation.yaml
+  hub_dir: /usr/local/etc/crowdsec/hub/
+  index_path: /usr/local/etc/crowdsec/hub/.index.json
+  notification_dir: /usr/local/etc/crowdsec/notifications/
   plugin_dir: /usr/local/lib/crowdsec/plugins/
 crowdsec_service:
-  acquisition_path: /etc/crowdsec/acquis.yaml
+  acquisition_path: /usr/local/etc/crowdsec/acquis.yaml
   parser_routines: 1
 cscli:
   output: human
 db_config:
   log_level: info
   type: sqlite
-  db_path: /var/lib/crowdsec/data/crowdsec.db
+  db_path: /var/db/crowdsec/data/crowdsec.db
   #user: 
   #password:
   #db_name:
@@ -36,16 +36,16 @@ plugin_config:
 api:
   client:
     insecure_skip_verify: false
-    credentials_path: /etc/crowdsec/local_api_credentials.yaml
+    credentials_path: /usr/local/etc/crowdsec/local_api_credentials.yaml
   server:
     log_level: info
     listen_uri: 127.0.0.1:8080
-    profiles_path: /etc/crowdsec/profiles.yaml
+    profiles_path: /usr/local/etc/crowdsec/profiles.yaml
     online_client: # Central API credentials (to push signals and receive bad IPs)
-      credentials_path: /etc/crowdsec/online_api_credentials.yaml
+      credentials_path: /usr/local/etc/crowdsec/online_api_credentials.yaml
 #    tls:
-#      cert_file: /etc/crowdsec/ssl/cert.pem
-#      key_file: /etc/crowdsec/ssl/key.pem
+#      cert_file: /usr/local/etc/crowdsec/ssl/cert.pem
+#      key_file: /usr/local/etc/crowdsec/ssl/key.pem
 prometheus:
   enabled: true
   level: full

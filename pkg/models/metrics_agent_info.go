@@ -42,11 +42,6 @@ func (m *MetricsAgentInfo) ContextValidate(ctx context.Context, formats strfmt.R
 	return nil
 }
 
-// ContextValidate validates this metrics agent info based on context it is used
-func (m *MetricsAgentInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	return nil
-}
-
 // MarshalBinary interface implementation
 func (m *MetricsAgentInfo) MarshalBinary() ([]byte, error) {
 	if m == nil {

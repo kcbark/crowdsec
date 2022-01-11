@@ -62,7 +62,7 @@ func (a *apic) FetchScenariosListFromDB() ([]string, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "while listing machines")
 	}
-	//merge all scenarios together
+	// merge all scenarios together
 	for _, v := range machines {
 		machineScenarios := strings.Split(v.Scenarios, ",")
 		log.Debugf("%d scenarios for machine %d", len(machineScenarios), v.ID)
@@ -248,7 +248,7 @@ func (a *apic) Send(cacheOrig *models.AddSignalsRequest) {
 		defer cancel()
 		_, _, err := a.apiClient.Signal.Add(ctx, &send)
 		if err != nil {
-			//we log it here as well, because the return value of func might be discarded
+			// we log it here as well, because the return value of func might be discarded
 			log.Errorf("Error while sending chunk to central API : %s", err)
 		}
 		pageStart += bulkSize
@@ -256,9 +256,11 @@ func (a *apic) Send(cacheOrig *models.AddSignalsRequest) {
 	}
 }
 
-var SCOPE_CAPI string = "CAPI"
-var SCOPE_CAPI_ALIAS string = "crowdsecurity/community-blocklist" //we don't use "CAPI" directly, to make it less confusing for the user
-var SCOPE_LISTS string = "lists"
+var (
+	SCOPE_CAPI       string = "CAPI"
+	SCOPE_CAPI_ALIAS string = "crowdsecurity/community-blocklist" // we don't use "CAPI" directly, to make it less confusing for the user
+	SCOPE_LISTS      string = "lists"
+)
 
 func (a *apic) PullTop() error {
 	var err error
@@ -296,7 +298,7 @@ func (a *apic) PullTop() error {
 	var nbDeleted int
 	// process deleted decisions
 	for _, decision := range data.Deleted {
-		//count individual deletions
+		// count individual deletions
 		if *decision.Origin == SCOPE_CAPI {
 			delete_counters[SCOPE_CAPI][*decision.Scenario]++
 		} else if *decision.Origin == SCOPE_LISTS {
@@ -331,13 +333,13 @@ func (a *apic) PullTop() error {
 		return nil
 	}
 
-	//we receive only one list of decisions, that we need to break-up :
+	// we receive only one list of decisions, that we need to break-up :
 	// one alert for "community blocklist"
 	// one alert per list we're subscribed to
 	var alertsFromCapi []*models.Alert
 	alertsFromCapi = make([]*models.Alert, 0)
 
-	//iterate over all new decisions, and simply create corresponding alerts
+	// iterate over all new decisions, and simply create corresponding alerts
 	for _, decision := range data.New {
 		found := false
 		for _, sub := range alertsFromCapi {
@@ -369,7 +371,7 @@ func (a *apic) PullTop() error {
 			newAlert := models.Alert{}
 			newAlert.Message = types.StrPtr("")
 			newAlert.Source = &models.Source{}
-			if *decision.Origin == SCOPE_CAPI { //to make things more user friendly, we replace CAPI with community-blocklist
+			if *decision.Origin == SCOPE_CAPI { // to make things more user friendly, we replace CAPI with community-blocklist
 				newAlert.Source.Scope = types.StrPtr(SCOPE_CAPI)
 				newAlert.Scenario = types.StrPtr(SCOPE_CAPI)
 			} else if *decision.Origin == SCOPE_LISTS {
@@ -392,9 +394,9 @@ func (a *apic) PullTop() error {
 		}
 	}
 
-	//iterate a second time and fill the alerts with the new decisions
+	// iterate a second time and fill the alerts with the new decisions
 	for _, decision := range data.New {
-		//count and create separate alerts for each list
+		// count and create separate alerts for each list
 		if *decision.Origin == SCOPE_CAPI {
 			add_counters[SCOPE_CAPI]["all"]++
 		} else if *decision.Origin == SCOPE_LISTS {
@@ -411,7 +413,7 @@ func (a *apic) PullTop() error {
 			*decision.Scope = types.Range
 		}
 		found := false
-		//add the individual decisions to the right list
+		// add the individual decisions to the right list
 		for idx, alert := range alertsFromCapi {
 			if *decision.Origin == SCOPE_CAPI {
 				if *alert.Source.Scope == SCOPE_CAPI {

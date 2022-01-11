@@ -27,7 +27,7 @@ type KinesisConfiguration struct {
 	configuration.DataSourceCommonCfg `yaml:",inline"`
 	StreamName                        string  `yaml:"stream_name"`
 	StreamARN                         string  `yaml:"stream_arn"`
-	UseEnhancedFanOut                 bool    `yaml:"use_enhanced_fanout"` //Use RegisterStreamConsumer and SubscribeToShard instead of GetRecords
+	UseEnhancedFanOut                 bool    `yaml:"use_enhanced_fanout"` // Use RegisterStreamConsumer and SubscribeToShard instead of GetRecords
 	AwsProfile                        *string `yaml:"aws_profile"`
 	AwsRegion                         string  `yaml:"aws_region"`
 	AwsEndpoint                       string  `yaml:"aws_endpoint"`
@@ -107,8 +107,8 @@ func (k *KinesisSource) newClient() error {
 
 func (k *KinesisSource) GetMetrics() []prometheus.Collector {
 	return []prometheus.Collector{linesRead, linesReadShards}
-
 }
+
 func (k *KinesisSource) GetAggregMetrics() []prometheus.Collector {
 	return []prometheus.Collector{linesRead, linesReadShards}
 }
@@ -166,7 +166,6 @@ func (k *KinesisSource) OneShotAcquisition(out chan types.Event, t *tomb.Tomb) e
 func (k *KinesisSource) decodeFromSubscription(record []byte) ([]CloudwatchSubscriptionLogEvent, error) {
 	b := bytes.NewBuffer(record)
 	r, err := gzip.NewReader(b)
-
 	if err != nil {
 		k.logger.Error(err)
 		return nil, err
@@ -273,8 +272,8 @@ func (k *KinesisSource) ParseAndPushRecords(records []*kinesis.Record, out chan 
 		var data []CloudwatchSubscriptionLogEvent
 		var err error
 		if k.Config.FromSubscription {
-			//The AWS docs says that the data is base64 encoded
-			//but apparently GetRecords decodes it for us ?
+			// The AWS docs says that the data is base64 encoded
+			// but apparently GetRecords decodes it for us ?
 			data, err = k.decodeFromSubscription(record.Data)
 			if err != nil {
 				logger.Errorf("Cannot decode data: %s", err)
@@ -304,9 +303,9 @@ func (k *KinesisSource) ParseAndPushRecords(records []*kinesis.Record, out chan 
 
 func (k *KinesisSource) ReadFromSubscription(reader kinesis.SubscribeToShardEventStreamReader, out chan types.Event, shardId string, streamName string) error {
 	logger := k.logger.WithFields(log.Fields{"shard_id": shardId})
-	//ghetto sync, kinesis allows to subscribe to a closed shard, which will make the goroutine exit immediately
-	//and we won't be able to start a new one if this is the first one started by the tomb
-	//TODO: look into parent shards to see if a shard is closed before starting to read it ?
+	// ghetto sync, kinesis allows to subscribe to a closed shard, which will make the goroutine exit immediately
+	// and we won't be able to start a new one if this is the first one started by the tomb
+	// TODO: look into parent shards to see if a shard is closed before starting to read it ?
 	time.Sleep(time.Second)
 	for {
 		select {
@@ -389,7 +388,7 @@ func (k *KinesisSource) EnhancedRead(out chan types.Event, t *tomb.Tomb) error {
 		case <-t.Dying():
 			k.logger.Infof("Kinesis source is dying")
 			k.shardReaderTomb.Kill(nil)
-			_ = k.shardReaderTomb.Wait() //we don't care about the error as we kill the tomb ourselves
+			_ = k.shardReaderTomb.Wait() // we don't care about the error as we kill the tomb ourselves
 			err = k.DeregisterConsumer()
 			if err != nil {
 				return errors.Wrap(err, "Cannot deregister consumer")
@@ -400,7 +399,7 @@ func (k *KinesisSource) EnhancedRead(out chan types.Event, t *tomb.Tomb) error {
 			if k.shardReaderTomb.Err() != nil {
 				return k.shardReaderTomb.Err()
 			}
-			//All goroutines have exited without error, so a resharding event, start again
+			// All goroutines have exited without error, so a resharding event, start again
 			k.logger.Debugf("All reader goroutines have exited, resharding event or periodic resubscribe")
 			continue
 		}
@@ -410,15 +409,17 @@ func (k *KinesisSource) EnhancedRead(out chan types.Event, t *tomb.Tomb) error {
 func (k *KinesisSource) ReadFromShard(out chan types.Event, shardId string) error {
 	logger := k.logger.WithFields(log.Fields{"shard": shardId})
 	logger.Debugf("Starting to read shard")
-	sharIt, err := k.kClient.GetShardIterator(&kinesis.GetShardIteratorInput{ShardId: aws.String(shardId),
+	sharIt, err := k.kClient.GetShardIterator(&kinesis.GetShardIteratorInput{
+		ShardId:           aws.String(shardId),
 		StreamName:        &k.Config.StreamName,
-		ShardIteratorType: aws.String(kinesis.ShardIteratorTypeLatest)})
+		ShardIteratorType: aws.String(kinesis.ShardIteratorTypeLatest),
+	})
 	if err != nil {
 		logger.Errorf("Cannot get shard iterator: %s", err)
 		return errors.Wrap(err, "Cannot get shard iterator")
 	}
 	it := sharIt.ShardIterator
-	//AWS recommends to wait for a second between calls to GetRecords for a given shard
+	// AWS recommends to wait for a second between calls to GetRecords for a given shard
 	ticker := time.NewTicker(time.Second)
 	for {
 		select {
@@ -429,7 +430,7 @@ func (k *KinesisSource) ReadFromShard(out chan types.Event, shardId string) erro
 				switch err.(type) {
 				case *kinesis.ProvisionedThroughputExceededException:
 					logger.Warn("Provisioned throughput exceeded")
-					//TODO: implement exponential backoff
+					// TODO: implement exponential backoff
 					continue
 				case *kinesis.ExpiredIteratorException:
 					logger.Warn("Expired iterator")
@@ -475,7 +476,7 @@ func (k *KinesisSource) ReadFromStream(out chan types.Event, t *tomb.Tomb) error
 		case <-t.Dying():
 			k.logger.Info("kinesis source is dying")
 			k.shardReaderTomb.Kill(nil)
-			_ = k.shardReaderTomb.Wait() //we don't care about the error as we kill the tomb ourselves
+			_ = k.shardReaderTomb.Wait() // we don't care about the error as we kill the tomb ourselves
 			return nil
 		case <-k.shardReaderTomb.Dying():
 			reason := k.shardReaderTomb.Err()

@@ -25,12 +25,14 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testMachineID = "test"
-var testPassword = strfmt.Password("test")
-var MachineTest = models.WatcherAuthRequest{
-	MachineID: &testMachineID,
-	Password:  &testPassword,
-}
+var (
+	testMachineID = "test"
+	testPassword  = strfmt.Password("test")
+	MachineTest   = models.WatcherAuthRequest{
+		MachineID: &testMachineID,
+		Password:  &testPassword,
+	}
+)
 
 var UserAgent = fmt.Sprintf("crowdsec-test/%s", cwversion.Version)
 
@@ -241,7 +243,6 @@ func TestUnknownPath(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, 404, w.Code)
-
 }
 
 /*
@@ -260,7 +261,6 @@ ListenURI              string              `yaml:"listen_uri,omitempty"` //127.0
 */
 
 func TestLoggingDebugToFileConfig(t *testing.T) {
-
 	/*declare settings*/
 	maxAge := "1h"
 	flushConfig := csconfig.FlushDBCfg{
@@ -302,10 +302,10 @@ func TestLoggingDebugToFileConfig(t *testing.T) {
 	req.Header.Set("User-Agent", UserAgent)
 	api.router.ServeHTTP(w, req)
 	assert.Equal(t, 404, w.Code)
-	//wait for the request to happen
+	// wait for the request to happen
 	time.Sleep(500 * time.Millisecond)
 
-	//check file content
+	// check file content
 	data, err := ioutil.ReadFile(expectedFile)
 	if err != nil {
 		t.Fatalf("failed to read file : %s", err)
@@ -319,11 +319,9 @@ func TestLoggingDebugToFileConfig(t *testing.T) {
 
 	os.Remove("./crowdsec.log")
 	os.Remove(expectedFile)
-
 }
 
 func TestLoggingErrorToFileConfig(t *testing.T) {
-
 	/*declare settings*/
 	maxAge := "1h"
 	flushConfig := csconfig.FlushDBCfg{
@@ -364,10 +362,10 @@ func TestLoggingErrorToFileConfig(t *testing.T) {
 	req.Header.Set("User-Agent", UserAgent)
 	api.router.ServeHTTP(w, req)
 	assert.Equal(t, 404, w.Code)
-	//wait for the request to happen
+	// wait for the request to happen
 	time.Sleep(500 * time.Millisecond)
 
-	//check file content
+	// check file content
 	x, err := ioutil.ReadFile(expectedFile)
 	if err == nil && len(x) > 0 {
 		t.Fatalf("file should be empty, got '%s'", x)
@@ -375,5 +373,4 @@ func TestLoggingErrorToFileConfig(t *testing.T) {
 
 	os.Remove("./crowdsec.log")
 	os.Remove(expectedFile)
-
 }

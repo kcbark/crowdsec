@@ -18,12 +18,13 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-var logFormatter log.Formatter
-var LogOutput *lumberjack.Logger //io.Writer
-var logLevel log.Level
+var (
+	logFormatter log.Formatter
+	LogOutput    *lumberjack.Logger // io.Writer
+	logLevel     log.Level
+)
 
 func SetDefaultLoggerConfig(cfgMode string, cfgFolder string, cfgLevel log.Level, maxSize int, maxFiles int, maxAge int, compress *bool) error {
-
 	/*Configure logs*/
 	if cfgMode == "file" {
 		_maxsize := 500
@@ -85,7 +86,6 @@ func ConfigureLogger(clog *log.Logger) error {
 }
 
 func Clone(a, b interface{}) error {
-
 	buff := new(bytes.Buffer)
 	enc := gob.NewEncoder(buff)
 	dec := gob.NewDecoder(buff)
@@ -121,7 +121,7 @@ func WriteStackTrace(iErr interface{}) string {
 	return tmpfile.Name()
 }
 
-//CatchPanic is a util func that we should call from all go-routines to ensure proper stacktrace handling
+// CatchPanic is a util func that we should call from all go-routines to ensure proper stacktrace handling
 func CatchPanic(component string) {
 	if r := recover(); r != nil {
 		log.Errorf("crowdsec - goroutine %s crashed : %s", component, r)
@@ -179,7 +179,6 @@ func copyFileContents(src, dst string) (err error) {
 
 /*copy the file, ioutile doesn't offer the feature*/
 func CopyFile(sourceSymLink, destinationFile string) (err error) {
-
 	sourceFile, err := filepath.EvalSymlinks(sourceSymLink)
 	if err != nil {
 		log.Infof("Not a symlink : %s", err)

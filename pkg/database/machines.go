@@ -162,5 +162,4 @@ func (c *Client) IsMachineRegistered(machineID string) (bool, error) {
 	}
 
 	return false, nil
-
 }

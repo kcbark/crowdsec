@@ -42,8 +42,8 @@ func (m *MetricsAgentInfo) ContextValidate(ctx context.Context, formats strfmt.R
 	return nil
 }
 
-// ContextValidate validates this metrics soft info based on context it is used
-func (m *MetricsSoftInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this metrics agent info based on context it is used
+func (m *MetricsAgentInfo) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

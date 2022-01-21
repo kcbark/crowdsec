@@ -5382,56 +5382,6 @@ func (m *MachineMutation) LastPushCleared() bool {
 func (m *MachineMutation) ResetLastPush() {
 	m.last_push = nil
 	delete(m.clearedFields, machine.FieldLastPush)
-<<<<<<< HEAD
-}
-
-// SetLastPush sets the "last_push" field.
-func (m *MachineMutation) SetLastPush(t time.Time) {
-	m.last_push = &t
-}
-
-// LastPush returns the value of the "last_push" field in the mutation.
-func (m *MachineMutation) LastPush() (r time.Time, exists bool) {
-	v := m.last_push
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldLastPush returns the old "last_push" field's value of the Machine entity.
-// If the Machine object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MachineMutation) OldLastPush(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, fmt.Errorf("OldLastPush is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, fmt.Errorf("OldLastPush requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldLastPush: %w", err)
-	}
-	return oldValue.LastPush, nil
-}
-
-// ClearLastPush clears the value of the "last_push" field.
-func (m *MachineMutation) ClearLastPush() {
-	m.last_push = nil
-	m.clearedFields[machine.FieldLastPush] = struct{}{}
-}
-
-// LastPushCleared returns if the "last_push" field was cleared in this mutation.
-func (m *MachineMutation) LastPushCleared() bool {
-	_, ok := m.clearedFields[machine.FieldLastPush]
-	return ok
-}
-
-// ResetLastPush resets all changes to the "last_push" field.
-func (m *MachineMutation) ResetLastPush() {
-	m.last_push = nil
-	delete(m.clearedFields, machine.FieldLastPush)
 }
 
 // SetMachineId sets the "machineId" field.

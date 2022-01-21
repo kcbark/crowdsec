@@ -61,27 +61,6 @@ func (mu *MachineUpdate) SetLastPush(t time.Time) *MachineUpdate {
 // ClearLastPush clears the value of the "last_push" field.
 func (mu *MachineUpdate) ClearLastPush() *MachineUpdate {
 	mu.mutation.ClearLastPush()
-<<<<<<< HEAD
-	return mu
-}
-
-// SetLastPush sets the "last_push" field.
-func (mu *MachineUpdate) SetLastPush(t time.Time) *MachineUpdate {
-	mu.mutation.SetLastPush(t)
-	return mu
-}
-
-// SetNillableLastPush sets the "last_push" field if the given value is not nil.
-func (mu *MachineUpdate) SetNillableLastPush(t *time.Time) *MachineUpdate {
-	if t != nil {
-		mu.SetLastPush(*t)
-	}
-	return mu
-}
-
-// ClearLastPush clears the value of the "last_push" field.
-func (mu *MachineUpdate) ClearLastPush() *MachineUpdate {
-	mu.mutation.ClearLastPush()
 	return mu
 }
 
@@ -529,27 +508,6 @@ func (muo *MachineUpdateOne) ClearUpdatedAt() *MachineUpdateOne {
 // SetLastPush sets the "last_push" field.
 func (muo *MachineUpdateOne) SetLastPush(t time.Time) *MachineUpdateOne {
 	muo.mutation.SetLastPush(t)
-	return muo
-}
-
-// ClearLastPush clears the value of the "last_push" field.
-func (muo *MachineUpdateOne) ClearLastPush() *MachineUpdateOne {
-	muo.mutation.ClearLastPush()
-<<<<<<< HEAD
-	return muo
-}
-
-// SetLastPush sets the "last_push" field.
-func (muo *MachineUpdateOne) SetLastPush(t time.Time) *MachineUpdateOne {
-	muo.mutation.SetLastPush(t)
-	return muo
-}
-
-// SetNillableLastPush sets the "last_push" field if the given value is not nil.
-func (muo *MachineUpdateOne) SetNillableLastPush(t *time.Time) *MachineUpdateOne {
-	if t != nil {
-		muo.SetLastPush(*t)
-	}
 	return muo
 }
 

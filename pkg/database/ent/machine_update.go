@@ -61,6 +61,7 @@ func (mu *MachineUpdate) SetLastPush(t time.Time) *MachineUpdate {
 // ClearLastPush clears the value of the "last_push" field.
 func (mu *MachineUpdate) ClearLastPush() *MachineUpdate {
 	mu.mutation.ClearLastPush()
+<<<<<<< HEAD
 	return mu
 }
 
@@ -534,6 +535,7 @@ func (muo *MachineUpdateOne) SetLastPush(t time.Time) *MachineUpdateOne {
 // ClearLastPush clears the value of the "last_push" field.
 func (muo *MachineUpdateOne) ClearLastPush() *MachineUpdateOne {
 	muo.mutation.ClearLastPush()
+<<<<<<< HEAD
 	return muo
 }
 

@@ -311,14 +311,6 @@ func (mc *MachineCreate) createSpec() (*Machine, *sqlgraph.CreateSpec) {
 		})
 		_node.LastPush = &value
 	}
-	if value, ok := mc.mutation.LastPush(); ok {
-		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Value:  value,
-			Column: machine.FieldLastPush,
-		})
-		_node.LastPush = value
-	}
 	if value, ok := mc.mutation.MachineId(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
 			Type:   field.TypeString,

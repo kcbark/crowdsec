@@ -5382,6 +5382,7 @@ func (m *MachineMutation) LastPushCleared() bool {
 func (m *MachineMutation) ResetLastPush() {
 	m.last_push = nil
 	delete(m.clearedFields, machine.FieldLastPush)
+<<<<<<< HEAD
 }
 
 // SetLastPush sets the "last_push" field.

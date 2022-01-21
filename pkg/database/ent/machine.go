@@ -114,12 +114,6 @@ func (m *Machine) assignValues(columns []string, values []interface{}) error {
 				m.LastPush = new(time.Time)
 				*m.LastPush = value.Time
 			}
-		case machine.FieldLastPush:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field last_push", values[i])
-			} else if value.Valid {
-				m.LastPush = value.Time
-			}
 		case machine.FieldMachineId:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field machineId", values[i])
